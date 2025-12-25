@@ -22,7 +22,7 @@ const addLeave = async (req, res) => {
 
 }
 
-const getLeaves = async (req, res) => {
+const getLeave = async (req, res) => {
     try {
         const { id } = req.params;
         const employee = await Employee.findOne({ userId: id });
@@ -35,4 +35,47 @@ const getLeaves = async (req, res) => {
 }
 };
 
-export { addLeave , getLeaves };
+const getLeaves = async (req, res) => {
+    try {
+       const leaves = await Leave.find().populate({
+            path: 'employeeId',
+            populate: [{
+                path: 'department',
+                select: 'dep_name'
+            },
+            {
+                path: 'userId',
+                select: 'name'
+            }]
+        });
+        return res.status(200).json({ success: true, leaves });
+
+    } catch (error) {
+        console.error("Error fetching leaves:", error.message);
+        return res.status(500).json({ success: false, error: "Server error while fetching leaves" });
+}
+};
+
+const getLeaveDetail = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const leave = await Leave.findById({_id: id}).populate({
+            path: 'employeeId',
+            populate: [{
+                path: 'department',
+                select: 'dep_name'
+            },
+            {
+                path: 'userId',
+                select: 'name , profileImage'
+            }]
+        });
+        return res.status(200).json({ success: true, leave });
+
+    } catch (error) {
+        console.error("Error fetching leave detail:", error.message);
+        return res.status(500).json({ success: false, error: "Server error while fetching leave detail" });
+}
+};
+
+export { addLeave , getLeave , getLeaves , getLeaveDetail };

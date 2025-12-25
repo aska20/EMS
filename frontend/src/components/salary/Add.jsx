@@ -146,15 +146,21 @@ const Add = () => {
       <label className="block text-sm font-medium text-gray-700">
         Basic Salary
       </label>
-      <input
-        type="number"
-        name="basicSalary"
-        value={employee.basicSalary}
-        onChange={handleChange}
-        placeholder="Basic Salary"
-        className="mt-1 p-2 block w-full border border-gray-300 rounded-md"
-        required
-      />
+     <input
+  type="number"
+  name="basicSalary"
+  min="0"
+  value={employee.basicSalary}
+  onChange={(e) => {
+    const value = Number(e.target.value);
+    if (value < 0) return;
+    handleChange(e);
+  }}
+  placeholder="Basic Salary"
+  className="mt-1 p-2 block w-full border border-gray-300 rounded-md"
+  required
+/>
+
     </div>
 
     {/* Allowances */}
@@ -163,14 +169,20 @@ const Add = () => {
         Allowances
       </label>
       <input
-        type="number"
-        name="allowances"
-        value={employee.allowances}
-        onChange={handleChange}
-        placeholder="Allowances"
-        className="mt-1 p-2 block w-full border border-gray-300 rounded-md"
-        required
-      />
+  type="number"
+  name="allowances"
+  min="0"
+  value={employee.allowances}
+  onChange={(e) => {
+    const value = Number(e.target.value);
+    if (value < 0) return;
+    handleChange(e);
+  }}
+  placeholder="Allowances"
+  className="mt-1 p-2 block w-full border border-gray-300 rounded-md"
+  required
+/>
+
     </div>
 
     {/* Deductions */}
@@ -179,14 +191,20 @@ const Add = () => {
         Deductions
       </label>
       <input
-        type="number"
-        name="deductions"
-        value={employee.deductions}
-        onChange={handleChange}
-        placeholder="Deductions"
-        className="mt-1 p-2 block w-full border border-gray-300 rounded-md"
-        required
-      />
+  type="number"
+  name="deductions"
+  min="0"
+  value={employee.deductions}
+  onChange={(e) => {
+    const value = Number(e.target.value);
+    if (value < 0) return;
+    handleChange(e);
+  }}
+  placeholder="Deductions"
+  className="mt-1 p-2 block w-full border border-gray-300 rounded-md"
+  required
+/>
+
     </div>
 
     {/* Pay Date */}
