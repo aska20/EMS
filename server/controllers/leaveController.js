@@ -76,6 +76,19 @@ const getLeaveDetail = async (req, res) => {
         console.error("Error fetching leave detail:", error.message);
         return res.status(500).json({ success: false, error: "Server error while fetching leave detail" });
 }
-};
+}
+const updateleave = async (req, res) => {
+    try{
+        const { id } = req.params;
+        const leave = await Leave.findByIdAndUpdate({_id: id}, {status: req.body.status})
+        if(!leave){
+            return res.status(404).json({ success: false, error: "Leave not found" });
+        }  
+        return res.status(200).json({ success: true, message: "Leave status updated successfully" }); 
+    } catch (error) {
+        console.log(error.message)
+        return res.status(500).json({ success: false, error: "Server error while updating leave status" });
+}
+}
 
-export { addLeave , getLeave , getLeaves , getLeaveDetail };
+export { addLeave , getLeave , getLeaves , getLeaveDetail, updateleave };

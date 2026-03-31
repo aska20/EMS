@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { Navigate, useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 
 const Detail= () => {
@@ -7,6 +7,7 @@ const Detail= () => {
   const [leave, setLeave] = useState(null);
   const [loading, setLoading] = useState(true); // Loading state
   const [error, setError] = useState(null); // Error state
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchLeave = async () => {
@@ -35,6 +36,32 @@ const Detail= () => {
 
     fetchLeave();
   }, [id]);
+
+  const changeStatus = async(id,status) => {
+      try {
+        setLoading(true);
+        const response = await axios.put
+        (
+          `http://localhost:5000/api/leave/${id}`, { status },
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
+        );
+
+        if (response.data.success) {
+          navigate("/admin-dashboard/leaves");
+        } else {
+          setError("Failed to fetch employee data.");
+        }
+      } catch (error) {
+        setError(error.response?.data?.error || "Failed to fetch employee");
+      } finally {
+        setLoading(false);
+      }
+  }
+
 
   // If loading, show a loading message
   if (loading) {
@@ -70,47 +97,63 @@ const Detail= () => {
         </div>
 
         <div className="flex flex-col space-y-3">
-          <div className="flex space-x-3">
+          <div className="flex space-x-3 mb-2">
             <p className="text-lg font-bold">Name:</p>
             <p className="font-medium">{leave.employeeId.userId.name || "N/A"}</p>
           </div>
 
-          <div className="flex space-x-3">
+          <div className="flex space-x-3 mb-2">
             <p className="text-lg font-bold">Employee Id:</p>
             <p className="font-medium">{leave.employeeId.employeeId || "N/A"}</p>
           </div>
 
-          <div className="flex space-x-3">
+          <div className="flex space-x-3 mb-2">
             <p className="text-lg font-bold">Leave Types:</p>
             <p className="font-medium">
               { leave.leaveType || "N/A" }
             </p>
           </div>
 
-          <div className="flex space-x-3">
+          <div className="flex space-x-3 mb-2">
             <p className="text-lg font-bold">Reason:</p>
             <p className="font-medium">{leave.reason || "N/A"}</p>
           </div>
 
-          <div className="flex space-x-3">
+          <div className="flex space-x-3 mb-2">
             <p className="text-lg font-bold">Department:</p>
             <p className="font-medium">{leave.employeeId.department?.dep_name || "N/A"}</p>
           </div>
 
           
-          <div className="flex space-x-3">
+          <div className="flex space-x-3 mb-2">
             <p className="text-lg font-bold">Start Date:</p>
             <p className="font-medium">{leave.startDate ? new Date(leave.startDate).toLocaleDateString() : "N/A"}</p>
           </div>
 
-           <div className="flex space-x-3">
+           <div className="flex space-x-3 mb-2">
             <p className="text-lg font-bold">End Date:</p>
             <p className="font-medium">{leave.endDate ? new Date(leave.endDate).toLocaleDateString() : "N/A"}</p>
           </div>
 
-           <div className="flex space-x-3">
-            <p className="text-lg font-bold">Status:</p>
-            <p className="font-medium">{leave.status || "N/A"}</p>
+           <div className="flex space-x-3 mb-2">
+            <p className="text-lg font-bold">
+              { leave.status === "Pending" ?"Action" : "Status:"}
+            </p>
+            {leave.status === "Pending" ? (
+              <div>
+                <button className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded mr-2"
+                onClick={() => changeStatus(leave._id,"Approved")}>
+                  Approve
+                </button>
+                <button className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded"
+                onClick={() => changeStatus(leave._id,"Rejected")}
+                >
+                  Reject
+                </button>
+              </div>
+            ) : 
+              <p className="font-medium">{leave.status || "N/A"}</p>
+            }
           </div>
         </div>
       </div>
